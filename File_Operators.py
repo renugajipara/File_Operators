@@ -18,8 +18,11 @@ class JournalManager:
             print("Journal entry added successfully.\n")
     
     def view_entries(self):
+        if not os.path.exists(self.file):
+            raise FileNotFoundError("Journal file dosen't exist.")
+        
         try:
-            with open("journal.txt", "r") as f:
+            with open(self.file, "r") as f:
                 text = f.read()
         
         except FileNotFoundError as e:
@@ -30,16 +33,16 @@ class JournalManager:
             if text.strip() == "":
                 print("No journal entries found. Start by adding new entry.\n")
             else:
-                print(f"Journal entries:\n {"-" * 50}\n", text, "\n")
-        
-        finally:
-            print("Had a great session on oop concept.\n")
+                print(f"Journal entries:\n {"-" * 50}\n{text}\n")
             
     def search_entry(self):
+        if not os.path.exists(self.file):
+            raise FileNotFoundError("Journal file dosen't exist.")
+        
         search_entry = input("Enter the keyword or date to search for: ")
         
         try:
-            with open("journal.txt", "r") as f:
+            with open(self.file, "r") as f:
                 text = f.read()
 
         except FileNotFoundError as e:
@@ -49,7 +52,7 @@ class JournalManager:
             entries = text.strip().split("\n\n")
             match_ent = []
             for i in entries:
-                if text.lower() in i.lower():
+                if search_entry.lower() in i.lower():
                     match_ent.append(i)
             
             if match_ent:
@@ -62,8 +65,7 @@ class JournalManager:
 
     def delete_entries(self):
         if not os.path.exists(self.file):
-            print("No journal entries to delete.")
-            return
+            raise FileNotFoundError("Journal file dosen't exist.")
         
         ans = input("Are you sure you want to delete all entries? (yes/no): ")
         try:
@@ -81,22 +83,23 @@ class JournalManager:
         else:
             print("All journal entries have been deleted.")
 
+j = JournalManager()
 while True:        
     print("1.Add a new Entry\n 2.View all Entries\n 3.Search for an Entry\n 4.Delete all Entry\n 5.Exit") 
     choice = int(input("Enter your choice: "))
 
     match choice:
         case 1:
-            JournalManager().add_entry()
+            j.add_entry()
             
         case 2:
-            JournalManager().view_entries()
+            j.view_entries()
 
         case 3:
-            JournalManager().search_entry()
+            j.search_entry()
 
         case 4:
-            JournalManager().delete_entries()
+            j.delete_entries()
 
         case 5:
             print(f"Thank you for using personal journal manager. Goodbye!")
